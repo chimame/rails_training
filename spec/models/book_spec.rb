@@ -18,4 +18,48 @@ RSpec.describe Book, type: :model do
       end
     end
   end
+
+  describe '#calculate_loan_charge_from' do
+    let(:book) { Book.new(price: 100) }
+    subject{ book.calculate_loan_charge_from(date) }
+
+    context 'レンタル日が今日以前の場合' do
+      let(:date) { Date.today - 1.day}
+
+      it{ is_expected.to eq 0 }
+    end
+
+    context 'レンタル日が今日以降の場合' do
+      context 'レンタル日が7日後の場合' do
+        let(:date) { Date.today + 7.day}
+
+        it{ is_expected.to eq 70 }
+      end
+      context 'レンタル日が8日後の場合' do
+        let(:date) { Date.today + 8.day}
+
+        it{ is_expected.to eq 72 }
+      end
+      context 'レンタル日が14日後の場合' do
+        let(:date) { Date.today + 14.day }
+
+        it{ is_expected.to eq 126 }
+      end
+      context 'レンタル日が15日後の場合' do
+        let(:date) { Date.today + 15.day }
+
+        it{ is_expected.to eq 120 }
+      end
+      context 'レンタル日が21日後の場合' do
+        let(:date) { Date.today + 21.day }
+
+        it{ is_expected.to eq 168 }
+      end
+      context 'レンタル日が22日後の場合' do
+        let(:date) { Date.today + 22.day }
+
+        it{ is_expected.to eq 154 }
+      end
+    end
+  end
 end

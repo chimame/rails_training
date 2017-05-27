@@ -24,6 +24,6 @@ class Book < ApplicationRecord
       unit_price = 0
     end
 
-    rental_period * unit_price
+    rental_period * unit_price.to_i
   end
 end
