@@ -22,44 +22,63 @@ RSpec.describe Book, type: :model do
   describe '#calculate_loan_charge_from' do
     let(:book) { Book.new(price: 100) }
     subject{ book.calculate_loan_charge_from(date) }
+    let(:date) { Date.today + 2.day}
 
+    before do
+      allow(book).to receive(:rental_period_from).and_return(3)
+      allow(book).to receive(:rental_unit_price_by).and_return(10)
+    end
+
+    it { is_expected.to eq 30 }
+  end
+
+  describe '#rental_period_from' do
+    let(:book) { Book.new }
+    subject{ book.rental_period_from(date) }
     context 'レンタル日が今日以前の場合' do
       let(:date) { Date.today - 1.day}
-
       it{ is_expected.to eq 0 }
     end
 
     context 'レンタル日が今日以降の場合' do
-      context 'レンタル日が7日後の場合' do
-        let(:date) { Date.today + 7.day}
+      let(:date) { Date.today + 2.day}
+      it{ is_expected.to eq 2 }
+    end
+  end
 
-        it{ is_expected.to eq 70 }
-      end
-      context 'レンタル日が8日後の場合' do
-        let(:date) { Date.today + 8.day}
+  describe '#rental_unit_price_by' do
+    let(:book) { Book.new(price: 100) }
+    subject{ book.rental_unit_price_by(rental_period) }
 
-        it{ is_expected.to eq 72 }
-      end
-      context 'レンタル日が14日後の場合' do
-        let(:date) { Date.today + 14.day }
+    context 'レンタル日が7日後の場合' do
+      let(:rental_period) { 7 }
 
-        it{ is_expected.to eq 126 }
-      end
-      context 'レンタル日が15日後の場合' do
-        let(:date) { Date.today + 15.day }
+      it{ is_expected.to eq 10 }
+    end
+    context 'レンタル日が8日後の場合' do
+      let(:rental_period) { 8 }
 
-        it{ is_expected.to eq 120 }
-      end
-      context 'レンタル日が21日後の場合' do
-        let(:date) { Date.today + 21.day }
+      it{ is_expected.to eq 9 }
+    end
+    context 'レンタル日が14日後の場合' do
+      let(:rental_period) { 14 }
 
-        it{ is_expected.to eq 168 }
-      end
-      context 'レンタル日が22日後の場合' do
-        let(:date) { Date.today + 22.day }
+      it{ is_expected.to eq 9 }
+    end
+    context 'レンタル日が15日後の場合' do
+      let(:rental_period) { 15 }
 
-        it{ is_expected.to eq 154 }
-      end
+      it{ is_expected.to eq 8 }
+    end
+    context 'レンタル日が21日後の場合' do
+      let(:rental_period) { 21 }
+
+      it{ is_expected.to eq 8 }
+    end
+    context 'レンタル日が22日後の場合' do
+      let(:rental_period) { 22 }
+
+      it{ is_expected.to eq 7 }
     end
   end
 end
